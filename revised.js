@@ -23,41 +23,37 @@
     };
     req.send();
   }
-  /* The absolute, brain-deadest simplest way to solve this might be just to call the "Choose an email" function multiple times.
-     This does not, however, guarantee that the same message would not be highlighted the same amount of times.
-     Instead, what would be better would be simply to gather three unique indices from the array of []messages. */
-  function choose_an_email() {
-    var messages = jQuery(".xW.xY:visible").parent();
-    var chosenIndex = Math.floor(Math.random() * messages.length);
-    var chosenOne = jQuery(messages[chosenIndex]);
-    chosenOne.css("background-color", "#3a8bf7");
-    chosenOne.find(".yW,,.y6,.xW.xY").css("color", "#fff").css("font-weight", "bold");
-    chosenOne.find(".y2").css("color", "#d4e1ff").css("font-weight", "normal");
+
+  function randomInteger(max) {
+    return Math.floor(Math.random() * max);
   }
-  // do not like this solution. Is O(n^2) in worst case. More efficient algorithm later - think I can get O(n);
+
   function uniquePicks(numPicks, set) {
+    var setCopy = set.slice(); // splice modifies the array and we do not want to modify original;
     var picks = [];
-    var rand; // initialized outside of loop.
-    while (picks < numPicks) {
-      rand = Math.floor(Math.random() * set.length);
-      if (picks.indexOf(set[rand]) > -1) {
-        continue;
-      }
-      picks.push(set[rand]);
+    var p;
+    while (picks.length < numPicks){
+      picks.push(setCopy.splice(randomInteger(setCopy.length), 1)[0])
     }
     return picks;
   }
 
   function choose_multiple_emails(num) {
+    // if num is undefined or not a number, default to 1.
+    // if num is not an integer (i.e, a float), default to Math.floor(num);
+    //   assuming that Math.floor(anyInteger) => anyInteger;
+    num = isNaN(num) ? 1 : Math.floor(num);
+    // declare outside forEach;
+    var $msg;
     var messages = jQuery(".xW.xY:visible").parent();
-    var chosenMessages = uniquePics(num, messages);
-    chosenMessages.forEach(function(msg){
-      msg.css("background-color", "#3a8bf7");
-      msg.find(".yW,,.y6,.xW.xY").css("color", "#fff").css("font-weight", "bold");
-      msg.find(".y2").css("color", "#d4e1ff").css("font-weight", "normal");
+    var chosenMessages = uniquePicks(num, messages);
+    chosenMessages.forEach(function(msg) {
+      $msg = jQuery(msg);
+      $msg.css("background-color", "#3a8bf7");
+      $msg.find(".yW,,.y6,.xW.xY").css("color", "#fff").css("font-weight", "bold");
+      $msg.find(".y2").css("color", "#d4e1ff").css("font-weight", "normal");
     })
   }
-
 
   if (document.location.toString().indexOf("mail.google.com") == -1) {
     alert("Click on this bookmarklet when you are viewing your Gmail Inbox.");
@@ -65,7 +61,9 @@
     loadScript('https://ajax.googleapis.com/ajax/libs/jquery/1.5.2/jquery.min.js');
 
     // wouldn't it be better to simply use the callback feature of loadScript() rather than
-    // polling here?
+    // polling here? Or is there a delay between when the script is added to the DOM
+    // and when the jQuery variable is assigned?
+    // merits further investigation.
     function wait_for_jquery() {
       if (typeof jQuery == "undefined") {
         setTimeout(wait_for_jquery, 500);
