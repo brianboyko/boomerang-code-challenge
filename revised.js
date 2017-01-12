@@ -48,6 +48,9 @@
    * @return {Array} An array containing the number of unique pics from the set provided;
    */
   function uniquePicks(numPicks, coll) {
+    if(coll.length < numPicks){
+      return coll.slice(); // we want to return a copy, not the original array;
+    }
     var collCopy = coll.slice(); // splice modifies the array and we do not want to modify original;
     var picks = [];
     var p;
