@@ -22,8 +22,21 @@ Behavior: Should highlight all e-mails.
 
 Behavior: Console.log a warning, other than that, no-op.
 
-uniquePics();
+* each message needs to be hooked into jQuery so that it has the .css properties.
+
+uniquePicks();
 
 * setCopy should decrease in length during each loop.
 
 Test (temporarily) via console.log; use an assert in more formal testing that old setCopy.length = new setCopy.length + 1;
+
+wait_for_jquery();
+
+* wait_for_jquery should never terminate when jQuery is unavailable;
+
+* Possible TODO: if jQuery does not load at all, possibility for infinite loop here.
+Perhaps a overall timeout to prevent this behavior, or a counter to limit the number of retries?
+
+* Can we use the callback feature of loadScript() to load the script rather than relying
+on polling here?  The great strength of JS is through asynchronous functionality; I think
+this is worth investigation.

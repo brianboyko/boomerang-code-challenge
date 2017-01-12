@@ -1,8 +1,5 @@
 (function() {
 
-  /*
-    function loadScript does not seem to need any editing.
-   */
   // loadScript lets us load jQuery without violating Gmail's Content Security Policy
   function loadScript(url, callback) {
     var req = new XMLHttpRequest();
@@ -24,20 +21,49 @@
     req.send();
   }
 
+  /**
+   * randomInteger() - provides a random integer from 0 (inclusive) to the maximum provided(non-inclusive);
+   * @param {Number: integer} max: Maximum (non-inclusive) possible number to roll.
+   *    randomInteger(6), for example, will return either 0, 1, 2, 3, 4, or 5;
+   * @return {Number: integer} A random integer from 0 to max -1;
+   * */
   function randomInteger(max) {
     return Math.floor(Math.random() * max);
   }
 
-  function uniquePicks(numPicks, set) {
-    var setCopy = set.slice(); // splice modifies the array and we do not want to modify original;
+  /**
+   * uniquePicks() - selects a number of unique values from the array;
+   *
+   * NB: The more I think about this, the more I don't like this solution.
+   * Yes, it works, but the splice() operation is O(n) in worst case, and we call it
+   * once for each pick, making this an O(n^2) operation.
+   *
+   * The other way to go about this would be to pick the numbers at random and check for
+   * but that has a worst case scenario of O(infinity); in practice, though,
+   * one could get the indicies, and slice, making O(1) in the best case.
+   * However, that might be overoptimization at this stage.
+   *
+   * @param  {Number:integer} numPicks The quantity of items to get from the array;
+   * @param  {Array} coll (short for "collection") The array from which to choose the unique picks.
+   * @return {Array} An array containing the number of unique pics from the set provided;
+   */
+  function uniquePicks(numPicks, coll) {
+    var collCopy = coll.slice(); // splice modifies the array and we do not want to modify original;
     var picks = [];
     var p;
-    while (picks.length < numPicks){
-      picks.push(setCopy.splice(randomInteger(setCopy.length), 1)[0])
+    while (picks.length < numPicks) {
+      picks.push(collCopy.splice(randomInteger(collCopy.length), 1)[0])
     }
     return picks;
   }
 
+  /**
+   * choose_multiple_emails() - highlights multiple e-mails.
+   * @param {Number} num - the number of messages to highlight.
+   *   @default if isNaN(num), defaults to 1; if !Number.isInteger(num), defaults to Math.floor(num);
+   * @return void;
+   * @sideEffect: "num" random messages are highlighted;
+   */
   function choose_multiple_emails(num) {
     // if num is undefined or not a number, default to 1.
     // if num is not an integer (i.e, a float), default to Math.floor(num);
